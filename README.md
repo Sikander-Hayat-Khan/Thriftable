@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Thriftable
 
-## Getting Started
+Pre-loved premium, sold online. Physical outlets came first — this is the web storefront and portal.
 
-First, run the development server:
+## Stack
 
-```bash
+- Next.js (App Router), JavaScript — no TypeScript
+- Tailwind CSS
+- Deployed on Vercel, preview builds on every push
+
+## Run locally
+
+```
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+  page.js                    landing page
+  health/                    health-check page (fetches live, shows status)
+  (customer)/                customer portal route group
+    dashboard/ shop/ shop/[id]/ wishlist/ cart/ checkout/
+    orders/ orders/[id]/return/ loyalty/ reviews/new/ support/
+  (admin)/admin/              admin portal route group
+    dashboard/ inventory/ inventory/[id]/edit/ drops/
+    orders/ customers/ customers/[id]/ reviews/ analytics/ cms/ settings/
+components/
+  nav.js                     top nav shell
+  placeholder.js             shared placeholder shell used by every unbuilt screen
+```
 
-## Learn More
+Route groups `(customer)` and `(admin)` don't affect the URL — they're there so
+auth/role gating can be added to each group's `layout.js` without touching every page.
 
-To learn more about Next.js, take a look at the following resources:
+## Status: Phase 1 (Foundations)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Every screen from the spec exists as a routed placeholder. Nothing is wired to
+real data or auth yet.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Still open:**
+- Auth provider (customer + admin gating)
+- Backend / database
+- AI integration (capstone requirement, not yet scoped)
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Done:**
+- All routes scaffolded, zero build errors
+- Tailwind + base design tokens (`app/globals.css`)
+- Health-check page (`/health`) — live fetch, shows healthy/unhealthy state
+- No secrets in repo, `.env*` gitignored
