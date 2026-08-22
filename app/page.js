@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -98,10 +99,71 @@ const categories = [
 ];
 
 export default function Home() {
+  const [activeSection, setActiveSection] = useState(0);
+  const mainRef = useRef(null);
+
+  // Track active section on scroll
+  useEffect(() => {
+    const container = mainRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const scrollPosition = container.scrollTop;
+      const sectionHeight = container.clientHeight;
+      if (sectionHeight > 0) {
+        const index = Math.round(scrollPosition / sectionHeight);
+        setActiveSection(Math.min(7, Math.max(0, index)));
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (index) => {
+    const container = mainRef.current;
+    if (!container) return;
+    container.scrollTo({
+      top: index * container.clientHeight,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <main className="h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-neutral-950 text-white selection:bg-[#B2A376] selection:text-black">
+    <main
+      ref={mainRef}
+      className="relative h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-neutral-950 text-white selection:bg-[#B2A376] selection:text-black"
+    >
+      {/* Eight Vertical Section Dots Navigation (Fixed Bottom Right) */}
+      <nav
+        aria-label="Section dots navigation"
+        className="fixed right-6 sm:right-10 bottom-10 z-50 flex flex-col gap-3 items-center pointer-events-auto"
+      >
+        {Array.from({ length: 8 }).map((_, idx) => {
+          const isActive = activeSection === idx;
+          const isHero = activeSection === 0;
+          const colorClass = isHero ? "bg-white" : "bg-black";
+
+          return (
+            <button
+              key={idx}
+              onClick={() => scrollToSection(idx)}
+              aria-label={`Go to section ${idx + 1}`}
+              className={`rounded-full transition-all duration-300 focus:outline-none ${colorClass} ${
+                isActive
+                  ? "w-2.5 h-2.5 opacity-100 scale-110"
+                  : "w-1.5 h-1.5 opacity-40 hover:opacity-80 hover:scale-110"
+              }`}
+            />
+          );
+        })}
+      </nav>
+
       {/* 00: Hero Section */}
-      <section className="relative h-screen w-full snap-start snap-always shrink-0 flex items-center justify-center overflow-hidden">
+      <section
+        id="hero"
+        className="relative h-screen w-full snap-start snap-always shrink-0 flex items-center justify-center overflow-hidden"
+      >
         {/* Background Image Container */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -237,3 +299,4 @@ export default function Home() {
     </main>
   );
 }
+
