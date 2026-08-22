@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/components/nav";
+import Preloader from "@/components/loader";
 
 const broela = localFont({
   src: "../public/fonts/broela/Broela.otf",
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${broela.variable} ${calluna.variable} ${nomad.variable} ${macSans.variable} ${prodaSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-neutral-900">
+        <Preloader />
         <Nav />
         <main className="flex-1">{children}</main>
       </body>
