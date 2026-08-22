@@ -1,176 +1,127 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Pivot as Hamburger } from "hamburger-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
-  { href: "/shop", label: "Shop" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/wishlist", label: "Wishlist" },
-  { href: "/cart", label: "Cart" },
-  { href: "/admin/dashboard", label: "Admin" },
+  { href: "/shop", label: "Shop", num: "01" },
+  { href: "/dashboard", label: "Dashboard", num: "02" },
+  { href: "/wishlist", label: "Wishlist", num: "03" },
+  { href: "/cart", label: "Cart", num: "04" },
+  { href: "/admin/dashboard", label: "Admin", num: "05" },
 ];
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // SVG Path Morphing for 180° rotated "D" shape to rectangle
-  // viewBox: 0 0 400 1000
-  const dInitial = "M 400 0 Q 400 500 400 1000 L 400 1000 L 400 0 Z";
-  const dCurve = "M 400 0 L 120 0 Q -180 500 120 1000 L 400 1000 Z"; // 180° rotated D curve bulge
-  const dFlat = "M 400 0 L 0 0 Q 0 500 0 1000 L 400 1000 Z";         // Full rectangle
-
-  const pathVariants = {
-    initial: {
-      d: dInitial,
-    },
-    animate: {
-      d: [dInitial, dCurve, dFlat],
-      transition: {
-        duration: 0.75,
-        times: [0, 0.45, 1],
-        ease: [0.76, 0, 0.24, 1],
-      },
-    },
-    exit: {
-      d: [dFlat, dCurve, dInitial],
-      transition: {
-        duration: 0.65,
-        times: [0, 0.55, 1],
-        ease: [0.76, 0, 0.24, 1],
-      },
-    },
-  };
-
-  const navListVariants = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.25,
-      },
-    },
-    exit: {
-      opacity: 0,
-      transition: {
-        staggerChildren: 0.04,
-        staggerDirection: -1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    initial: { opacity: 0, y: 30, x: 20 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      x: 0,
-      transition: { duration: 0.4, ease: [0.215, 0.61, 0.355, 1] },
-    },
-    exit: {
-      opacity: 0,
-      y: 20,
-      transition: { duration: 0.25 },
-    },
-  };
+  // Close menu on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <>
-      {/* Top Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 z-100 py-5 pointer-events-none">
+      {/* Top Fixed Header with Glassmorphism Blurred Background */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-60 transition-all duration-300 pointer-events-none ${
+          isOpen
+            ? "bg-transparent backdrop-blur-none border-transparent"
+            : "bg-black/40 backdrop-blur-md border-b border-white/10"
+        }`}
+      >
         <div className="w-full px-6 sm:px-12 h-16 flex items-center justify-between">
-          <Link href="/" className="font-semibold tracking-tight text-ink pointer-events-auto">
-            <img src="/logo.png" alt="logo" width={110} />
+          <Link href="/" className="font-normal tracking-tight text-ink pointer-events-auto">
+            <span className="text-2xl sm:text-2xl text-[#B2A376] font-logo font-extrabold tracking-widest">
+              THRIFTABLE
+            </span>
           </Link>
 
           {/* Single Hamburger Menu Toggle Button (transforms into cross on open) */}
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto relative z-60">
             <Hamburger
               toggled={isOpen}
               toggle={setIsOpen}
               color={isOpen ? "#000000" : "#ffffff"}
               size={26}
-              label="Toggle Menu"
+              duration={0.8}
+              rounded
+              label="Toggle Navigation Menu"
             />
           </div>
         </div>
       </header>
 
-      {/* Collapsible Sidebar Overlay & Drawer */}
-      <AnimatePresence mode="wait">
-        {isOpen && (
-          <>
-            {/* Dark Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 cursor-pointer"
-            />
+      {/* Dark Backdrop Overlay when menu is open */}
+      <div
+        onClick={() => setIsOpen(false)}
+        className={`fixed inset-0 bg-black/40 backdrop-blur-xs z-40 transition-opacity duration-700 ${
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        aria-hidden="true"
+      />
 
-            {/* Sidebar Drawer */}
-            <div className="fixed top-0 right-0 h-screen w-[85vw] sm:w-[50vw] lg:w-[40vw] min-w-75 z-50 pointer-events-auto overflow-hidden">
-              {/* Animated SVG Morphing Background */}
-              <svg
-                className="absolute inset-0 w-full h-full pointer-events-none"
-                viewBox="0 0 400 1000"
-                preserveAspectRatio="none"
+      {/* Sidebar Drawer with Flipped D to Rectangle Shape Morphing Transition */}
+      <aside
+        aria-label="Navigation Sidebar"
+        className={`fixed top-0 right-0 h-screen w-[85vw] sm:w-[50vw] lg:w-[40vw] min-w-75 bg-[#B2A376] z-50 pointer-events-auto overflow-hidden shadow-2xl flex flex-col justify-between px-10 sm:px-14 pt-8 pb-12 text-black transform transition-all duration-200 ease-in-out ${
+          isOpen
+            ? "translate-x-0 opacity-100 pointer-events-auto"
+            : "translate-x-full opacity-0 pointer-events-none"
+        }`}
+        style={{
+          backgroundColor: "#B2A376",
+          borderTopLeftRadius: isOpen ? "0px" : "100%",
+          borderBottomLeftRadius: isOpen ? "0px" : "100% 50%",
+          transitionProperty: "transform, border-radius, opacity",
+          transitionDuration: "1200ms",
+          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      >
+        {/* Top Logo inside Collapsible Drawer */}
+        <div className="pt-2">
+          <Link href="/" onClick={() => setIsOpen(false)} className="font-normal tracking-tight text-black inline-block">
+            <span className="text-2xl sm:text-4xl text-black font-logo font-extrabold tracking-widest">
+              THRIFTABLE
+            </span>
+          </Link>
+        </div>
+
+        {/* Vertical Navigation Links */}
+        <nav className="flex flex-col gap-6 my-auto">
+          {navLinks.map((link, idx) => (
+            <div key={link.href}>
+              <Link
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="group inline-flex items-start gap-3 text-3xl sm:text-4xl font-medium tracking-wide text-black hover:opacity-75 transition-all duration-200"
+                style={{
+                  transitionDelay: isOpen ? `${idx * 60 + 200}ms` : "0ms",
+                }}
               >
-                <motion.path
-                  fill="#B2A376"
-                  variants={pathVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                />
-              </svg>
-
-              {/* Sidebar Content */}
-              <div className="relative z-10 flex flex-col justify-between h-full px-10 sm:px-14 pt-32 pb-12 text-black">
-                {/* Vertical Navigation Links */}
-                <motion.nav
-                  className="flex flex-col gap-6"
-                  variants={navListVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                >
-                  {navLinks.map((link) => (
-                    <motion.div key={link.href} variants={itemVariants}>
-                      <Link
-                        href={link.href}
-                        onClick={() => setIsOpen(false)}
-                        className="group inline-flex items-center text-3xl sm:text-4xl font-medium tracking-wide text-black hover:opacity-75 transition-all duration-200"
-                      >
-                        <span className="relative">
-                          {link.label}
-                          <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full" />
-                        </span>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </motion.nav>
-
-                {/* Brand Footer Info */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ delay: 0.4, duration: 0.4 }}
-                  className="text-xs uppercase tracking-widest text-black/60 pt-6 border-t border-black/15"
-                >
-                  Thriftable &copy; {new Date().getFullYear()}
-                </motion.div>
-              </div>
+                <span className="text-xs sm:text-sm font-extrabold tracking-wider text-black pt-1">
+                  {link.num}
+                </span>
+                <span className="relative">
+                  {link.label}
+                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full" />
+                </span>
+              </Link>
             </div>
-          </>
-        )}
-      </AnimatePresence>
+          ))}
+        </nav>
+
+        {/* Brand Footer Info */}
+        <div className="text-xs uppercase tracking-widest text-black/60 pt-6 border-t border-black/15">
+          Thriftable &copy; {new Date().getFullYear()}
+        </div>
+      </aside>
     </>
   );
 }
