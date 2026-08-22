@@ -1,5 +1,45 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Broela";
+  src: url("/fonts/broela/Broela.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Calluna";
+  src: url("/fonts/calluna/Calluna-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nomad";
+  src: url("/fonts/nomad/Nomad.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MacSans";
+  src: url("/fonts/mac_sans/MacSans-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ProdaSans";
+  src: url("/fonts/proda_sans/ProdaSans-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Thriftable base design tokens. Phase 1: minimal, expand as screens get built. */
 :root {
   --color-ink: #171717;
@@ -16,8 +56,55 @@
   --color-line: var(--color-line);
   --color-accent: var(--color-accent);
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-broela: "Broela", Georgia, serif;
+  --font-calluna: "Calluna", Georgia, serif;
+  --font-nomad: "Nomad", sans-serif;
+  --font-macsans: "MacSans", sans-serif;
+  --font-proda: "ProdaSans", sans-serif;
+}
+
+.font-logo {
+  font-family: var(--font-broela), "Broela", Georgia, serif;
+}
+
+.font-calluna {
+  font-family: var(--font-calluna), "Calluna", Georgia, serif;
+}
+
+.font-nomad {
+  font-family: var(--font-nomad), "Nomad", sans-serif;
+}
+
+.font-macsans {
+  font-family: var(--font-macsans), "MacSans", sans-serif;
+}
+
+.font-proda {
+  font-family: var(--font-proda), "ProdaSans", sans-serif;
 }
 
 body {
   font-family: var(--font-sans);
 }
+
+/* Hide scrollbar for Chrome, Safari, Opera, Edge, Firefox while keeping scrolling active */
+::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  height: 0px;
+}
+
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
