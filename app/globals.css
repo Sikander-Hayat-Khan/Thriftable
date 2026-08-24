@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @font-face {
   font-family: "Broela";
   src: url("/fonts/broela/Broela.otf") format("opentype");
@@ -81,6 +83,10 @@
 
 .font-proda {
   font-family: var(--font-proda), "ProdaSans", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {

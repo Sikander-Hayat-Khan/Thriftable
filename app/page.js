@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Footer from "@/components/footer";
+import FluidBackgroundFill from "@/components/fluid-background-fill";
+import { useTheme } from "@/components/theme-provider";
 
 const categories = [
   {
@@ -101,6 +104,9 @@ const categories = [
 export default function Home() {
   const [activeSection, setActiveSection] = useState(0);
   const mainRef = useRef(null);
+  const { theme, mounted } = useTheme();
+
+  const isDark = mounted ? theme === "dark" : true;
 
   // Track active section on scroll
   useEffect(() => {
@@ -112,7 +118,7 @@ export default function Home() {
       const sectionHeight = container.clientHeight;
       if (sectionHeight > 0) {
         const index = Math.round(scrollPosition / sectionHeight);
-        setActiveSection(Math.min(7, Math.max(0, index)));
+        setActiveSection(Math.min(8, Math.max(0, index)));
       }
     };
 
@@ -132,17 +138,21 @@ export default function Home() {
   return (
     <main
       ref={mainRef}
-      className="relative h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-neutral-950 text-white selection:bg-[#B2A376] selection:text-black"
+      className="relative h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-neutral-50 text-neutral-900 transition-colors duration-1000"
     >
-      {/* Eight Vertical Section Dots Navigation (Fixed Bottom Right) */}
+      {/* Nine Vertical Section Dots Navigation (Fixed Bottom Right) */}
       <nav
         aria-label="Section dots navigation"
-        className="fixed right-6 sm:right-10 bottom-10 z-50 flex flex-col gap-3 items-center pointer-events-auto"
+        className="fixed right-6 sm:right-10 bottom-10 z-30 flex flex-col gap-3 items-center pointer-events-auto"
       >
-        {Array.from({ length: 8 }).map((_, idx) => {
+        {Array.from({ length: 9 }).map((_, idx) => {
           const isActive = activeSection === idx;
-          const isHero = activeSection === 0;
-          const colorClass = isHero ? "bg-white" : "bg-black";
+          const isDarkBg =
+            isDark ||
+            activeSection === 0 ||
+            activeSection === 8 ||
+            (activeSection > 0 && activeSection < 8 && (activeSection - 1) % 2 === 1);
+          const colorClass = isDarkBg ? "bg-white" : "bg-black";
 
           return (
             <button
@@ -232,7 +242,7 @@ export default function Home() {
           <section
             key={cat.id}
             id={cat.id}
-            className="relative h-screen w-full bg-gray-200 snap-start snap-always shrink-0 flex flex-col lg:flex-row items-stretch overflow-hidden border-b border-white/5"
+            className="relative h-screen w-full snap-start snap-always shrink-0 flex flex-col lg:flex-row items-stretch overflow-hidden border-b border-black/10 dark:border-white/10 transition-colors duration-700"
           >
             {/* Ambient subtle background glow */}
             <div className="absolute inset-0 bg-radial from-[#B2A376]/5 via-transparent to-transparent pointer-events-none z-0" />
@@ -254,13 +264,16 @@ export default function Home() {
               <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
             </div>
 
-            {/* Copy Block Panel — Opposite Side with Padded Layout */}
+            {/* Copy Block Panel — Opposite Side with Fluid Animated Background */}
             <div
-              className={`w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-10 lg:py-0 z-10 ${
+              className={`w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-10 lg:py-0 z-10 relative overflow-hidden ${
                 isImageLeft ? "lg:order-2" : "lg:order-1"
               }`}
             >
-              <div className="max-w-xl mx-auto lg:mx-0 flex flex-col justify-center gap-5 sm:gap-6">
+              {/* Fluid Liquid Wave Background Fill */}
+              <FluidBackgroundFill />
+
+              <div className="max-w-xl mx-auto lg:mx-0 flex flex-col justify-center gap-5 sm:gap-6 relative z-10">
                 {/* Number & Eyebrow Row */}
                 <div className="flex items-center gap-4">
                   <span className="text-3xl sm:text-4xl font-proda font-extrabold text-[#B2A376]">
@@ -272,12 +285,12 @@ export default function Home() {
                 </div>
 
                 {/* Headline */}
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-macsans font-bold tracking-wider text-black leading-tight">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-macsans font-bold tracking-wider text-neutral-900 dark:text-white leading-tight transition-colors duration-1000">
                   {cat.headline}
                 </h2>
 
                 {/* Body */}
-                <p className="text-base sm:text-lg text-gray-600 font-proda font-light leading-relaxed">
+                <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 font-proda font-light leading-relaxed transition-colors duration-1000">
                   {cat.body}
                 </p>
 
@@ -287,8 +300,10 @@ export default function Home() {
                     href={cat.href}
                     className="group relative inline-flex items-center gap-3 px-8 py-3.5 bg-[#B2A376] text-black font-semibold text-xs sm:text-sm uppercase tracking-widest overflow-hidden transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95"
                   >
-                    <span className="absolute inset-0 bg-black translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
-                    <span className="relative z-10 text-white">{cat.cta}</span>
+                    <span className="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
+                    <span className="relative z-10 text-black group-hover:text-white dark:group-hover:text-black transition-colors duration-300">
+                      {cat.cta}
+                    </span>
                   </Link>
                 </div>
               </div>
@@ -296,6 +311,11 @@ export default function Home() {
           </section>
         );
       })}
+
+      {/* 08: Footer Section */}
+      <section id="footer" className="relative w-full snap-start snap-always shrink-0 min-h-[30vh]">
+        <Footer />
+      </section>
     </main>
   );
 }
