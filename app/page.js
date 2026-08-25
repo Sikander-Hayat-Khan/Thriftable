@@ -140,10 +140,10 @@ export default function Home() {
       ref={mainRef}
       className="relative h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-neutral-50 text-neutral-900 transition-colors duration-1000"
     >
-      {/* Nine Vertical Section Dots Navigation (Fixed Bottom Right) */}
+      {/* Nine Vertical Section Dots Navigation (Fixed Center Right) */}
       <nav
         aria-label="Section dots navigation"
-        className="fixed right-6 sm:right-10 bottom-10 z-30 flex flex-col gap-3 items-center pointer-events-auto"
+        className="fixed right-6 sm:right-10 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-3 items-center pointer-events-auto"
       >
         {Array.from({ length: 9 }).map((_, idx) => {
           const isActive = activeSection === idx;
