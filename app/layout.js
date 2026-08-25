@@ -77,7 +77,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-500">
         <ThemeProvider>
           <CartProvider>
-            {/* <Preloader /> */}
+            <Preloader />
             <Nav />
             <main className="flex-1">{children}</main>
           </CartProvider>
