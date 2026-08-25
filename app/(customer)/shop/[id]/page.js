@@ -79,8 +79,8 @@ export default async function ProductDetailPage({ params }) {
                 {product.colors.map((color, idx) => (
                   <div key={idx} className="flex items-center gap-2">
                     <span
-                      className="w-4 h-4 rounded-none border border-black/20 inline-block"
-                      style={{ backgroundColor: color.hex }}
+                      className="w-4 h-4 rounded-none border border-black/20 inline-block shrink-0"
+                      style={{ background: color.gradient || color.hex }}
                     />
                     <span className="text-xs font-mono text-neutral-500">
                       {color.name}
