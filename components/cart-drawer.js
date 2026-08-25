@@ -31,7 +31,7 @@ export default function CartDrawer() {
       {/* 40vw Right-Side Sliding Cart Drawer */}
       <aside
         aria-label="Shopping Cart Drawer"
-        className={`fixed top-0 right-0 h-screen w-full sm:w-[460px] lg:w-[40vw] max-w-[600px] z-80 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 shadow-2xl flex flex-col justify-between border-l border-black/10 dark:border-white/10 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed top-0 right-0 h-screen w-full sm:w-115 lg:w-[40vw] max-w-150 z-80 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 shadow-2xl flex flex-col justify-between border-l border-black/10 dark:border-white/10 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -148,8 +148,8 @@ export default function CartDrawer() {
                         <div className="flex font-proda items-center gap-1.5">
                           <span>Color:</span>
                           <span
-                            className="w-3 h-3 rounded-none border border-black/20 dark:border-white/20 inline-block"
-                            style={{ backgroundColor: item.selectedColor.hex }}
+                            className="w-3 h-3 rounded-none border border-black/20 dark:border-white/20 inline-block shrink-0"
+                            style={{ background: item.selectedColor.gradient || item.selectedColor.hex }}
                             title={item.selectedColor.name}
                           />
                           <span className="text-neutral-700 dark:text-neutral-300 font-medium capitalize">
