@@ -446,7 +446,7 @@ function ShopContent() {
                                 key={cIdx}
                                 title={color.name}
                                 className="w-3.5 h-3.5 rounded-none border border-black/20 dark:border-white/20 inline-block shrink-0"
-                                style={{ backgroundColor: color.hex }}
+                                style={{ background: color.gradient || color.hex }}
                               />
                             ))}
                           </div>
