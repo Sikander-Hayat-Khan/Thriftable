@@ -93,9 +93,12 @@ export default function Footer() {
             />
             <button
               type="submit"
-              className="bg-[#B2A376] hover:bg-white text-black cursor-pointer font-semibold text-xs px-4 py-2.5 uppercase tracking-wider transition-colors shrink-0"
+              className="group relative bg-[#B2A376] text-black cursor-pointer font-semibold text-xs px-4 py-2.5 uppercase tracking-wider overflow-hidden transition-all duration-300 shrink-0"
             >
-              Subscribe
+              <span className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
+              <span className="relative z-10 text-black">
+                Subscribe
+              </span>
             </button>
           </form>
 

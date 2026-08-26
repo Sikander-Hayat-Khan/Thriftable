@@ -138,7 +138,7 @@ export default function Home() {
   return (
     <main
       ref={mainRef}
-      className="relative h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-neutral-50 text-neutral-900 transition-colors duration-1000"
+      className="relative h-screen w-full overflow-y-scroll scroll-smooth no-scrollbar bg-neutral-50 text-neutral-900 transition-colors duration-1000"
     >
       {/* Nine Vertical Section Dots Navigation (Fixed Center Right) */}
       <nav
@@ -159,7 +159,7 @@ export default function Home() {
               key={idx}
               onClick={() => scrollToSection(idx)}
               aria-label={`Go to section ${idx + 1}`}
-              className={`rounded-full transition-all duration-300 focus:outline-none ${colorClass} ${
+              className={`rounded-full transition-all duration-300 focus:outline-none cursor-pointer ${colorClass} ${
                 isActive
                   ? "w-2.5 h-2.5 opacity-100 scale-110"
                   : "w-1.5 h-1.5 opacity-40 hover:opacity-80 hover:scale-110"
@@ -169,10 +169,10 @@ export default function Home() {
         })}
       </nav>
 
-      {/* 00: Hero Section */}
+      {/* 00: Hero Section (Hardware Accelerated Sticky Pinned) */}
       <section
         id="hero"
-        className="relative h-screen w-full snap-start snap-always shrink-0 flex items-center justify-center overflow-hidden"
+        className="sticky top-0 h-screen w-full shrink-0 flex items-center justify-center overflow-hidden z-0"
       >
         {/* Background Image Container */}
         <div className="absolute inset-0 z-0">
@@ -234,7 +234,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 01-07: Category Sections (50/50 Split Flush Edge Layout) */}
+      {/* 01-07: Category Sections (50/50 Split Flush Edge Layout - Slides Over Hero) */}
       {categories.map((cat, idx) => {
         const isImageLeft = idx % 2 === 0;
 
@@ -242,14 +242,14 @@ export default function Home() {
           <section
             key={cat.id}
             id={cat.id}
-            className="relative h-screen w-full snap-start snap-always shrink-0 flex flex-col lg:flex-row items-stretch overflow-hidden border-b border-black/10 dark:border-white/10 transition-colors duration-700"
+            className="relative z-10 min-h-screen lg:h-screen w-full shrink-0 flex flex-col lg:flex-row items-stretch overflow-hidden border-b border-black/10 dark:border-white/10 transition-colors duration-700 bg-neutral-50 dark:bg-[#171717] shadow-[0_-25px_50px_rgba(0,0,0,0.5)]"
           >
             {/* Ambient subtle background glow */}
             <div className="absolute inset-0 bg-radial from-[#B2A376]/5 via-transparent to-transparent pointer-events-none z-0" />
 
             {/* Image Panel — Stuck Flush to Left or Right Edge */}
             <div
-              className={`w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden group shrink-0 z-10 ${
+              className={`w-full lg:w-1/2 h-[45vh] lg:h-full min-h-80 relative overflow-hidden group shrink-0 z-10 ${
                 isImageLeft ? "lg:order-1" : "lg:order-2"
               }`}
             >
@@ -313,7 +313,7 @@ export default function Home() {
       })}
 
       {/* 08: Footer Section */}
-      <section id="footer" className="relative w-full snap-start snap-always shrink-0 min-h-[30vh]">
+      <section id="footer" className="relative z-10 w-full shrink-0 min-h-[30vh] bg-black">
         <Footer />
       </section>
     </main>

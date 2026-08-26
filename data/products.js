@@ -7,7 +7,7 @@ export const catalogueItems = [
     price: "$48.00",
     size: "L",
     gender: "Unisex",
-    condition: "Grade A Vintage",
+    condition: "Grade A Streetwear",
     description: "A boxy, drop-shoulder heavy-cotton t-shirt in a muted mustard or citron yellow, detailed with a retro oval graphic printed centrally across the chest.",
     colors: [
       { name: "Arabian Yellow", hex: "#DDC55B" },    
