@@ -277,8 +277,12 @@ function ShopContent() {
         </button>
       </section>
 
-      {/* 2. Minimalist Browse Catalogue Section */}
-      <section id="catalogue" aria-label="Browse Catalogue" className="w-full px-6 sm:px-12 lg:px-16 py-16 scroll-mt-16 bg-white dark:bg-neutral-950 transition-colors duration-500">
+      {/* 2. Minimalist Browse Catalogue Section (Slides Over Categories Grid) */}
+      <section
+        id="catalogue"
+        aria-label="Browse Catalogue"
+        className="relative z-10 w-full px-6 sm:px-12 lg:px-16 py-16 scroll-mt-16 bg-white dark:bg-neutral-950 transition-colors duration-500 shadow-[0_-25px_50px_rgba(0,0,0,0.45)]"
+      >
         {/* Header & Filter Controls Bar */}
         <div className="flex flex-col gap-8 pb-10 border-b border-black/10 dark:border-white/10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -392,8 +396,9 @@ function ShopContent() {
                               e.stopPropagation();
                               addToCart(item);
                             }}
-                            className="w-full py-2.5 px-4 bg-[#B2A376] hover:bg-[#9e8f63] text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl transition-all duration-200 active:scale-95 cursor-pointer rounded-none"
+                            className="group/btn relative w-full py-2.5 px-4 bg-[#B2A376] text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl overflow-hidden transition-all duration-300 active:scale-95 cursor-pointer rounded-none"
                           >
+                            <span className="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 24 24"
@@ -402,13 +407,15 @@ function ShopContent() {
                               strokeWidth="2"
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              className="w-4 h-4 shrink-0"
+                              className="relative z-10 w-4 h-4 shrink-0 text-black group-hover/btn:text-white dark:group-hover/btn:text-black transition-colors duration-300"
                             >
                               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
                               <path d="M3 6h18" />
                               <path d="M16 10a4 4 0 0 1-8 0" />
                             </svg>
-                            <span>Add to cart</span>
+                            <span className="relative z-10 text-black group-hover/btn:text-white dark:group-hover/btn:text-black transition-colors duration-300">
+                              Add to cart
+                            </span>
                           </button>
                         </div>
                       </div>

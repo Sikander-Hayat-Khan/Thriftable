@@ -15,9 +15,12 @@ export default function Placeholder({ heading, body, cta }) {
       {cta ? (
         <button
           type="button"
-          className="mt-8 border border-ink px-5 py-2.5 text-sm font-medium text-ink hover:bg-ink hover:text-paper transition-colors"
+          className="group relative mt-8 border border-ink px-5 py-2.5 text-sm font-medium text-ink overflow-hidden transition-all duration-300 block cursor-pointer"
         >
-          {cta}
+          <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
+          <span className="relative z-10 text-ink group-hover:text-paper transition-colors duration-300">
+            {cta}
+          </span>
         </button>
       ) : null}
     </div>
