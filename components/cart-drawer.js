@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "./cart-provider";
+import CartQuantityControl from "./cart-quantity-control";
 
 export default function CartDrawer() {
   const {
@@ -168,25 +169,15 @@ export default function CartDrawer() {
 
                   {/* Quantity Increment/Decrement Controls */}
                   <div className="flex items-center justify-between pt-3">
-                    <div className="flex items-center border border-black/15 dark:border-white/15">
-                      <button
-                        onClick={() => updateQuantity(item.id, -1)}
-                        aria-label="Decrease quantity"
-                        className="w-7 h-7 flex items-center justify-center text-neutral-600 dark:text-neutral-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer text-sm font-mono"
-                      >
-                        -
-                      </button>
-                      <span className="w-8 text-center text-xs font-mono font-semibold text-neutral-900 dark:text-white">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => updateQuantity(item.id, 1)}
-                        aria-label="Increase quantity"
-                        className="w-7 h-7 flex items-center justify-center text-neutral-600 dark:text-neutral-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer text-sm font-mono"
-                      >
-                        +
-                      </button>
-                    </div>
+                    <CartQuantityControl
+                      quantity={item.quantity}
+                      onIncrease={() => updateQuantity(item.id, 1)}
+                      onDecrease={() => updateQuantity(item.id, -1)}
+                      buttonSize="w-7 h-7"
+                      containerWidth="w-8"
+                      containerHeight="h-7"
+                      ariaLabelPrefix={item.name}
+                    />
 
                     <span className="text-xs font-proda tracking-wider text-neutral-400 uppercase">
                       Subtotal: <span className="text-neutral-900 dark:text-white font-semibold">${(parseFloat(item.price.replace("$", "")) * item.quantity).toFixed(2)}</span>
@@ -218,16 +209,22 @@ export default function CartDrawer() {
               <Link
                 href="/checkout"
                 onClick={closeCart}
-                className="w-full py-4 bg-[#B2A376] hover:bg-black hover:text-white text-black font-semibold text-xs uppercase tracking-widest text-center shadow-lg transition-all duration-400 ease-out active:scale-98 rounded-none dark:hover:bg-white dark:hover:text-black"
+                className="group relative w-full py-4 bg-[#B2A376] text-black font-semibold text-xs uppercase tracking-widest text-center shadow-lg overflow-hidden transition-all duration-300 ease-out active:scale-98 rounded-none block cursor-pointer"
               >
-                Proceed to Checkout
+                <span className="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
+                <span className="relative z-10 text-black group-hover:text-white dark:group-hover:text-black transition-colors duration-300">
+                  Proceed to Checkout
+                </span>
               </Link>
               <Link
                 href="/cart"
                 onClick={closeCart}
-                className="w-full py-3 border border-black/15 dark:border-white/15 text-neutral-900 dark:text-white hover:border-black dark:hover:border-white text-xs font-mono uppercase tracking-widest text-center transition-colors rounded-none"
+                className="group relative w-full py-3 border border-black/15 dark:border-white/15 text-neutral-900 dark:text-white text-xs font-mono uppercase tracking-widest text-center overflow-hidden transition-all duration-300 rounded-none block cursor-pointer"
               >
-                View Full Cart Page
+                <span className="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
+                <span className="relative z-10 text-neutral-900 dark:text-white group-hover:text-white dark:group-hover:text-black transition-colors duration-300">
+                  View Full Cart Page
+                </span>
               </Link>
             </div>
           </div>
