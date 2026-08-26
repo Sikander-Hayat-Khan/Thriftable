@@ -55,7 +55,7 @@ export default function Nav() {
         className={`fixed top-0 left-0 right-0 z-60 transition-all duration-500 pointer-events-none ${
           isOpen
             ? "bg-transparent backdrop-blur-none border-transparent"
-            : "bg-black/10 backdrop-blur-md border-b border-white/10 shadow-md"
+            : "bg-black sm:bg-black/10 backdrop-blur-md border-b border-white/10 shadow-md"
         }`}
       >
         <div className="w-full px-6 sm:px-12 h-16 flex items-center justify-between">

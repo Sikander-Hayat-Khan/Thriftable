@@ -15,49 +15,49 @@ const categories = [
     id: "streetwear",
     name: "Streetwear",
     image: "/shop/categories/streetwear.jpg",
-    className: "lg:col-span-5",
+    className: "col-span-2 md:col-span-1 lg:col-span-5 h-44 sm:h-56 lg:h-full",
     objectPosition: "object-top",
   },
   {
     id: "vintage",
     name: "Vintage",
     image: "/shop/categories/vintage.jpg",
-    className: "lg:col-span-4",
+    className: "col-span-1 lg:col-span-4 h-36 sm:h-48 lg:h-full",
     objectPosition: "object-center",
   },
   {
     id: "eyewear",
     name: "Eyewear",
     image: "/shop/categories/eyewear.jpg",
-    className: "lg:col-span-3",
+    className: "col-span-1 lg:col-span-3 h-36 sm:h-48 lg:h-full",
     objectPosition: "object-top",
   },
   {
     id: "footwear",
     name: "Footwear",
     image: "/shop/categories/footwear.jpg",
-    className: "lg:col-span-4",
+    className: "col-span-1 lg:col-span-4 h-36 sm:h-48 lg:h-full",
     objectPosition: "object-bottom",
   },
   {
     id: "athletic_wear",
     name: "Athletic Wear",
     image: "/shop/categories/athletic.jpg",
-    className: "lg:col-span-4",
+    className: "col-span-1 lg:col-span-4 h-36 sm:h-48 lg:h-full",
     objectPosition: "object-center",
   },
   {
     id: "accessories",
     name: "Accessories",
     image: "/shop/categories/accessories.jpg",
-    className: "lg:col-span-2",
+    className: "col-span-1 lg:col-span-2 h-36 sm:h-48 lg:h-full",
     objectPosition: "object-center",
   },
   {
     id: "kids",
     name: "Kids",
     image: "/shop/categories/kids.jpg",
-    className: "lg:col-span-2",
+    className: "col-span-1 lg:col-span-2 h-36 sm:h-48 lg:h-full",
     objectPosition: "object-center",
   },
 ];
@@ -228,11 +228,8 @@ function ShopContent() {
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-500">
-      {/* 1. Top Categories Grid Section (Sticky Pinned Hero) */}
-      <section
-        aria-label="Featured Categories"
-        className="sticky top-0 z-0 w-full h-[70vh] sm:h-[80vh] lg:h-screen pt-16 sm:pt-20 lg:pt-16 overflow-hidden"
-      >
+      {/* 1. Top Categories Grid Section */}
+      <section aria-label="Featured Categories" className="relative w-full lg:h-screen pt-16 sm:pt-20 lg:pt-0">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 lg:auto-rows-fr lg:grid-rows-2 h-full w-full gap-0 border-b border-black/10 dark:border-white/10">
           {categories.map((cat) => (
             <button
@@ -256,7 +253,7 @@ function ShopContent() {
 
               {/* Category Name & Action Indicator */}
               <div className="relative z-10 text-center flex flex-col items-center gap-1">
-                <span className="text-lg sm:text-xl lg:text-2xl font-macsans font-bold tracking-widest uppercase text-white drop-shadow-lg group-hover:text-[#B2A376] transition-colors duration-300">
+                <span className="text-base sm:text-xl lg:text-2xl font-macsans font-bold tracking-widest uppercase text-white drop-shadow-lg group-hover:text-[#B2A376] transition-colors duration-300">
                   {cat.name}
                 </span>
                 <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.25em] text-neutral-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -267,14 +264,14 @@ function ShopContent() {
           ))}
         </div>
 
-        {/* Floating Scroll Cue to Catalogue */}
+        {/* Floating Scroll Cue to Catalogue (desktop) */}
         <button
           onClick={scrollToCatalogue}
           aria-label="Scroll to browse catalogue"
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5 px-4 py-2 rounded-full text-white transition-all duration-300 hover:scale-105 cursor-pointer"
+          className="hidden lg:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex-col items-center gap-1.5 px-5 py-2.5 rounded-full text-white bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer shadow-lg"
         >
-          <span className="text-[16px] uppercase tracking-widest font-mono text-[#B2A376]">Browse Catalogue</span>
-          <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span className="text-[14px] uppercase tracking-widest font-mono text-[#B2A376]">Browse Catalogue</span>
+          <svg className="w-3.5 h-3.5 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
         </button>
