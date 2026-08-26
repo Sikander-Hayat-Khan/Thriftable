@@ -138,12 +138,12 @@ export default function Home() {
   return (
     <main
       ref={mainRef}
-      className="relative h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-neutral-50 text-neutral-900 transition-colors duration-1000"
+      className="relative lg:h-screen w-full min-h-screen lg:overflow-y-scroll lg:snap-y lg:snap-mandatory scroll-smooth lg:no-scrollbar bg-neutral-50 text-neutral-900 transition-colors duration-1000"
     >
-      {/* Nine Vertical Section Dots Navigation (Fixed Center Right) */}
+      {/* Nine Vertical Section Dots Navigation (Fixed Center Right) - Visible on desktop only */}
       <nav
         aria-label="Section dots navigation"
-        className="fixed right-6 sm:right-10 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-3 items-center pointer-events-auto"
+        className="fixed right-6 sm:right-10 top-1/2 -translate-y-1/2 z-30 hidden lg:flex flex-col gap-3 items-center pointer-events-auto"
       >
         {Array.from({ length: 9 }).map((_, idx) => {
           const isActive = activeSection === idx;
@@ -172,7 +172,7 @@ export default function Home() {
       {/* 00: Hero Section */}
       <section
         id="hero"
-        className="relative h-screen w-full snap-start snap-always shrink-0 flex items-center justify-center overflow-hidden"
+        className="relative min-h-screen lg:h-screen w-full lg:snap-start lg:snap-always shrink-0 flex items-center justify-center overflow-hidden"
       >
         {/* Background Image Container */}
         <div className="absolute inset-0 z-0">
@@ -242,14 +242,14 @@ export default function Home() {
           <section
             key={cat.id}
             id={cat.id}
-            className="relative h-screen w-full snap-start snap-always shrink-0 flex flex-col lg:flex-row items-stretch overflow-hidden border-b border-black/10 dark:border-white/10 transition-colors duration-700"
+            className="relative min-h-screen lg:h-screen w-full lg:snap-start lg:snap-always shrink-0 flex flex-col lg:flex-row items-stretch overflow-hidden border-b border-black/10 dark:border-white/10 transition-colors duration-700"
           >
             {/* Ambient subtle background glow */}
             <div className="absolute inset-0 bg-radial from-[#B2A376]/5 via-transparent to-transparent pointer-events-none z-0" />
 
             {/* Image Panel — Stuck Flush to Left or Right Edge */}
             <div
-              className={`w-full lg:w-1/2 h-[45vh] lg:h-full relative overflow-hidden group shrink-0 z-10 ${
+              className={`w-full lg:w-1/2 h-[45vh] sm:h-[50vh] lg:h-full relative overflow-hidden group shrink-0 z-10 ${
                 isImageLeft ? "lg:order-1" : "lg:order-2"
               }`}
             >
@@ -266,7 +266,7 @@ export default function Home() {
 
             {/* Copy Block Panel — Opposite Side with Fluid Animated Background */}
             <div
-              className={`w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-10 lg:py-0 z-10 relative overflow-hidden ${
+              className={`w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-12 sm:py-16 lg:py-0 z-10 relative overflow-hidden ${
                 isImageLeft ? "lg:order-2" : "lg:order-1"
               }`}
             >
@@ -313,7 +313,7 @@ export default function Home() {
       })}
 
       {/* 08: Footer Section */}
-      <section id="footer" className="relative w-full snap-start snap-always shrink-0 min-h-[30vh]">
+      <section id="footer" className="relative w-full lg:snap-start lg:snap-always shrink-0 min-h-[30vh]">
         <Footer />
       </section>
     </main>
