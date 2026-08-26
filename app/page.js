@@ -138,7 +138,7 @@ export default function Home() {
   return (
     <main
       ref={mainRef}
-      className="relative h-screen w-full overflow-y-scroll scroll-smooth no-scrollbar bg-neutral-50 text-neutral-900 transition-colors duration-1000"
+      className="relative min-h-screen lg:h-screen w-full lg:overflow-y-scroll scroll-smooth lg:no-scrollbar bg-neutral-50 text-neutral-900 transition-colors duration-1000"
     >
       {/* Nine Vertical Section Dots Navigation (Fixed Center Right) - Visible on desktop only */}
       <nav
@@ -169,10 +169,10 @@ export default function Home() {
         })}
       </nav>
 
-      {/* 00: Hero Section (Hardware Accelerated Sticky Pinned) */}
+      {/* 00: Hero Section (Hardware Accelerated Sticky Pinned on Desktop only) */}
       <section
         id="hero"
-        className="sticky top-0 h-screen w-full shrink-0 flex items-center justify-center overflow-hidden z-0"
+        className="relative lg:sticky lg:top-0 min-h-screen lg:h-screen w-full shrink-0 flex items-center justify-center overflow-hidden z-0"
       >
         {/* Background Image Container */}
         <div className="absolute inset-0 z-0">
@@ -234,7 +234,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 01-07: Category Sections (50/50 Split Flush Edge Layout - Slides Over Hero) */}
+      {/* 01-07: Category Sections (50/50 Split Flush Edge Layout - Slides Over Hero on Desktop) */}
       {categories.map((cat, idx) => {
         const isImageLeft = idx % 2 === 0;
 
@@ -242,7 +242,7 @@ export default function Home() {
           <section
             key={cat.id}
             id={cat.id}
-            className="relative z-10 min-h-screen lg:h-screen w-full shrink-0 flex flex-col lg:flex-row items-stretch overflow-hidden border-b border-black/10 dark:border-white/10 transition-colors duration-700 bg-neutral-50 dark:bg-[#171717] shadow-[0_-25px_50px_rgba(0,0,0,0.5)]"
+            className="relative z-10 min-h-screen lg:h-screen w-full shrink-0 flex flex-col lg:flex-row items-stretch overflow-hidden border-b border-black/10 dark:border-white/10 transition-colors duration-700 bg-neutral-50 dark:bg-[#171717] lg:shadow-[0_-25px_50px_rgba(0,0,0,0.5)]"
           >
             {/* Ambient subtle background glow */}
             <div className="absolute inset-0 bg-radial from-[#B2A376]/5 via-transparent to-transparent pointer-events-none z-0" />
