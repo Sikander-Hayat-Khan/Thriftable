@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { catalogueItems } from "@/data/products";
 import { useCart } from "@/components/cart-provider";
 import WishlistButton from "@/components/wishlist-button";
+import { createClient } from "@/utils/supabase/client";
 
 const ITEMS_PER_PAGE = 24;
 
@@ -111,10 +112,44 @@ const cardVariants = {
 function ShopContent() {
   const searchParams = useSearchParams();
   const { addToCart } = useCart();
+  const [productsList, setProductsList] = useState(catalogueItems);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Fetch live products from Supabase
+  useEffect(() => {
+    const fetchLiveProducts = async () => {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase.from("products").select("*");
+        if (!error && data && data.length > 0) {
+          const liveMap = new Map(data.map((p) => [String(p.id), p]));
+          const merged = catalogueItems.map((catItem) => {
+            const live = liveMap.get(String(catItem.id));
+            if (live) {
+              const stockNum = live.stock !== undefined ? Number(live.stock) : 10;
+              return {
+                ...catItem,
+                stock: stockNum,
+                is_available: live.is_available !== false && stockNum > 0,
+                price:
+                  typeof live.price === "number"
+                    ? `$${live.price.toFixed(2)}`
+                    : live.price || catItem.price,
+              };
+            }
+            return catItem;
+          });
+          setProductsList(merged);
+        }
+      } catch (err) {
+        console.warn("Error loading live products in shop:", err);
+      }
+    };
+    fetchLiveProducts();
+  }, []);
 
   const scrollToCatalogue = () => {
     setTimeout(() => {
@@ -153,7 +188,7 @@ function ShopContent() {
   };
 
   const filteredItems = useMemo(() => {
-    return catalogueItems
+    return productsList
       .filter((item) => {
         const matchesCategory =
           selectedCategory === "all" || item.category === selectedCategory;
@@ -393,36 +428,42 @@ function ShopContent() {
                           <WishlistButton product={item} size="sm" />
                         </div>
 
-                        {/* Slide-Up Add To Cart Button on Card Hover */}
+                        {/* Slide-Up Add To Cart / Out of Stock Button on Card Hover */}
                         <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              addToCart(item);
-                            }}
-                            className="group/btn relative w-full py-2.5 px-4 bg-[#B2A376] text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl overflow-hidden transition-all duration-300 active:scale-95 cursor-pointer rounded-none"
-                          >
-                            <span className="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="relative z-10 w-4 h-4 shrink-0 text-black group-hover/btn:text-white dark:group-hover/btn:text-black transition-colors duration-300"
+                          {item.is_available === false || item.stock === 0 ? (
+                            <div className="w-full py-2.5 px-4 bg-black dark:bg-neutral-300 dark:bg-neutral-600 text-white font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl rounded-none cursor-not-allowed select-none">
+                              Out of stock
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                addToCart(item);
+                              }}
+                              className="group/btn relative w-full py-2.5 px-4 bg-[#B2A376] text-black font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl overflow-hidden transition-all duration-300 active:scale-95 cursor-pointer rounded-none"
                             >
-                              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-                              <path d="M3 6h18" />
-                              <path d="M16 10a4 4 0 0 1-8 0" />
-                            </svg>
-                            <span className="relative z-10 text-black group-hover/btn:text-white dark:group-hover/btn:text-black transition-colors duration-300">
-                              Add to cart
-                            </span>
-                          </button>
+                              <span className="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="relative z-10 w-4 h-4 shrink-0 text-black group-hover/btn:text-white dark:group-hover/btn:text-black transition-colors duration-300"
+                              >
+                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                                <path d="M3 6h18" />
+                                <path d="M16 10a4 4 0 0 1-8 0" />
+                              </svg>
+                              <span className="relative z-10 text-black group-hover/btn:text-white dark:group-hover/btn:text-black transition-colors duration-300">
+                                Add to cart
+                              </span>
+                            </button>
+                          )}
                         </div>
                       </div>
 

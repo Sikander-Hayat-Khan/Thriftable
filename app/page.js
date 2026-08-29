@@ -107,6 +107,40 @@ export default function Home() {
   const mainRef = useRef(null);
   const { theme, mounted } = useTheme();
 
+  // Dynamic CMS State
+  const [heroEyebrow, setHeroEyebrow] = useState("Find it. Thrift it. Love it.");
+  const [heroTitle, setHeroTitle] = useState("THRIFTABLE");
+  const [heroSubtitle, setHeroSubtitle] = useState(
+    "Thriftable is where secondhand feels like the best decision you made all week."
+  );
+  const [heroCta, setHeroCta] = useState("Shop Now");
+  const [heroImage, setHeroImage] = useState("/hero_section/hero_image_3.png");
+  const [categorySections, setCategorySections] = useState(categories);
+
+  // Hydrate from LocalStorage & Supabase
+  useEffect(() => {
+    // 1. Instant cache
+    try {
+      const cached = localStorage.getItem("thriftable_cms_settings");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.heroEyebrow) setHeroEyebrow(parsed.heroEyebrow);
+        if (parsed.heroTitle) setHeroTitle(parsed.heroTitle);
+        if (parsed.heroSubtitle) setHeroSubtitle(parsed.heroSubtitle);
+        if (parsed.heroCta) setHeroCta(parsed.heroCta);
+        if (parsed.heroImage) setHeroImage(parsed.heroImage);
+        if (parsed.categories && Array.isArray(parsed.categories)) {
+          setCategorySections((prev) =>
+            prev.map((c) => {
+              const match = parsed.categories.find((pc) => pc.id === c.id);
+              return match ? { ...c, ...match } : c;
+            })
+          );
+        }
+      }
+    } catch {}
+  }, []);
+
   const isDark = mounted ? theme === "dark" : true;
 
   // Track active section on scroll
@@ -178,7 +212,7 @@ export default function Home() {
         {/* Background Image Container */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/hero_section/hero_image_3.png"
+            src={heroImage || "/hero_section/hero_image_3.png"}
             alt="Thriftable Hero"
             fill
             priority
@@ -191,15 +225,15 @@ export default function Home() {
         {/* Centered Hero Content */}
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center justify-center gap-5 sm:gap-7 pt-16">
           <p className="text-xs sm:text-base md:text-lg font-proda font-light tracking-[0.3em] uppercase text-[#B2A376]">
-            Find it. Thrift it. Love it.
+            {heroEyebrow}
           </p>
 
           <h1 className="font-logo text-5xl sm:text-7xl md:text-8xl lg:text-9xl text-white font-extrabold tracking-widest drop-shadow-2xl select-none">
-            THRIFTABLE
+            {heroTitle}
           </h1>
 
           <p className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-md sm:max-w-xl mx-auto font-proda tracking-widest font-normal leading-relaxed">
-            Thriftable is where secondhand feels like the best decision you made all week.
+            {heroSubtitle}
           </p>
 
           <div className="pt-3">
@@ -208,7 +242,7 @@ export default function Home() {
               className="group relative inline-flex items-center gap-3 px-8 py-3.5 bg-[#B2A376] text-black font-semibold text-xs sm:text-sm uppercase tracking-widest overflow-hidden transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95"
             >
               <span className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
-              <span className="relative z-10">Shop Now</span>
+              <span className="relative z-10">{heroCta}</span>
               <svg
                 className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                 fill="none"
@@ -236,7 +270,7 @@ export default function Home() {
       </section>
 
       {/* 01-07: Category Sections (50/50 Split Flush Edge Layout - Slides Over Hero on Desktop) */}
-      {categories.map((cat, idx) => {
+      {categorySections.map((cat, idx) => {
         const isImageLeft = idx % 2 === 0;
 
         return (

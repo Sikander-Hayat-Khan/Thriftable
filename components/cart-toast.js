@@ -116,3 +116,16 @@ export function showCartToast(item, color, openCart) {
     }
   );
 }
+
+export function showStockWarningToast(item, availableStock) {
+  toast.warn(
+    `Archive Inventory Limit: Only ${availableStock} piece(s) of "${item?.name || "this garment"}" are available.`,
+    {
+      position: "top-left",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+    }
+  );
+}
+

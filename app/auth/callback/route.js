@@ -39,14 +39,22 @@ export async function GET(request) {
           "";
 
         // 2. Upsert profile into public.profiles table
+        const isSuperAdmin = user.email?.trim().toLowerCase() === "skhan.bese23seecs@seecs.edu.pk";
+        const profileData = {
+          id: user.id,
+          full_name: fullName,
+          email: user.email,
+          avatar_url: avatarUrl,
+          updated_at: new Date().toISOString(),
+        };
+
+        if (isSuperAdmin) {
+          profileData.role = "admin";
+          profileData.is_admin = true;
+        }
+
         await supabase.from("profiles").upsert(
-          {
-            id: user.id,
-            full_name: fullName,
-            email: user.email,
-            avatar_url: avatarUrl,
-            updated_at: new Date().toISOString(),
-          },
+          profileData,
           { onConflict: "id" }
         );
 

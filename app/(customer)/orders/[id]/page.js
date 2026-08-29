@@ -24,9 +24,9 @@ export default function OrderDetailPage({ params }) {
 
   const contextOrder = getOrder(orderId);
 
-  // Fallback: If not found in context (e.g. guest following email tracking link), fetch via API
+  // Always fetch the freshest order receipt directly from live database
   useEffect(() => {
-    if (!contextOrder && orderId) {
+    if (orderId) {
       setFetchingDb(true);
       fetch(`/api/orders/${encodeURIComponent(orderId)}`)
         .then((res) => (res.ok ? res.json() : null))
@@ -40,9 +40,9 @@ export default function OrderDetailPage({ params }) {
         })
         .finally(() => setFetchingDb(false));
     }
-  }, [contextOrder, orderId]);
+  }, [orderId]);
 
-  const order = contextOrder || supabaseOrder;
+  const order = supabaseOrder || contextOrder;
 
   const handleCopyTracking = () => {
     if (!order?.trackingNumber) return;
@@ -490,7 +490,11 @@ export default function OrderDetailPage({ params }) {
                 </div>
 
                 <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between font-macsans font-bold text-neutral-900 dark:text-white">
-                  <span className="uppercase tracking-wider text-sm">Grand Total Paid</span>
+                  <span className="uppercase tracking-wider text-sm">
+                    {String(order.paymentMethod || "").toLowerCase().includes("cash") || String(order.paymentMethod || "").toLowerCase().includes("cod")
+                      ? "Amount to be Paid (COD)"
+                      : "Amount Paid"}
+                  </span>
                   <span className="font-mono text-xl text-[#807248] dark:text-[#d3c59a]">
                     ${Number(order.pricing?.total || 0).toFixed(2)}
                   </span>
@@ -537,16 +541,18 @@ export default function OrderDetailPage({ params }) {
                 <span className="font-bold text-neutral-900 dark:text-white uppercase">
                   {order.paymentMethod === "card"
                     ? `Credit Card (${order.paymentDetails?.last4 ? `•••• ${order.paymentDetails.last4}` : "Active"})`
-                    : order.paymentMethod === "applepay"
+                    : order.paymentMethod === "applepay" || order.paymentMethod === "apple"
                     ? "Apple Pay"
-                    : "Cash on Delivery"}
+                    : "Cash on Delivery (COD)"}
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-neutral-500">Payment Status</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                  {order.paymentMethod === "cod" && order.status !== "Delivered" ? "Due upon Delivery" : "Paid & Verified"}
+                <span className={String(order.paymentMethod || "").toLowerCase().includes("cash") || String(order.paymentMethod || "").toLowerCase().includes("cod") ? "text-amber-500 font-bold" : "text-emerald-600 dark:text-emerald-400 font-bold"}>
+                  {String(order.paymentMethod || "").toLowerCase().includes("cash") || String(order.paymentMethod || "").toLowerCase().includes("cod")
+                    ? "Payable upon Delivery (COD)"
+                    : "✓ Paid in Full"}
                 </span>
               </div>
             </div>

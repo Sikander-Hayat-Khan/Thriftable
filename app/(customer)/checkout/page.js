@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/components/cart-provider";
 import { useOrders } from "@/components/orders-provider";
+import { createClient } from "@/utils/supabase/client";
 
 const FREE_SHIPPING_THRESHOLD = 150;
 
@@ -41,10 +42,56 @@ export default function CheckoutPage() {
   const [useLoyaltyPoints, setUseLoyaltyPoints] = useState(false);
   const [isRedeemingAnimation, setIsRedeemingAnimation] = useState(false);
 
-  // Submission State
+  // Submission & Summary State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
+  const [placedOrderSummary, setPlacedOrderSummary] = useState(null);
+
+  // Autofill logged-in customer info
+  useEffect(() => {
+    async function autofillUserInfo() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          const fullName =
+            user.user_metadata?.full_name ||
+            user.user_metadata?.name ||
+            "";
+          const nameParts = fullName.trim().split(" ");
+          const fName = nameParts[0] || "";
+          const lName = nameParts.slice(1).join(" ") || "";
+          const userEmail = user.email || "";
+
+          // Query profiles table for saved phone, address
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle();
+
+          setFormData((prev) => ({
+            ...prev,
+            email: prev.email || userEmail,
+            firstName: prev.firstName || profile?.first_name || fName,
+            lastName: prev.lastName || profile?.last_name || lName,
+            phone: prev.phone || profile?.phone || "",
+            address: prev.address || profile?.address || "",
+            city: prev.city || profile?.city || "",
+            postalCode: prev.postalCode || profile?.postal_code || "",
+          }));
+        }
+      } catch (err) {
+        console.warn("Autofill user error:", err);
+      }
+    }
+
+    autofillUserInfo();
+  }, []);
 
   // Handle Loyalty Toggle
   const handleLoyaltyToggle = (checked) => {
@@ -102,7 +149,7 @@ export default function CheckoutPage() {
   );
 
   // Promo Code Validation
-  const handleApplyPromo = (e) => {
+  const handleApplyPromo = async (e) => {
     e.preventDefault();
     setPromoError("");
     const cleaned = promoInput.trim().toUpperCase();
@@ -111,6 +158,27 @@ export default function CheckoutPage() {
       setPromoError("Please enter a voucher code.");
       return;
     }
+
+    try {
+      const supabase = createClient();
+      const { data: promoRow } = await supabase
+        .from("promos")
+        .select("*")
+        .eq("code", cleaned)
+        .maybeSingle();
+
+      if (promoRow && promoRow.status?.toLowerCase() === "active") {
+        const percent = promoRow.discount_percent || 10;
+        setAppliedPromo({
+          code: promoRow.code,
+          label: promoRow.discount_text || `${percent}% Off Archival Order`,
+          type: "percent",
+          value: percent,
+        });
+        setPromoInput("");
+        return;
+      }
+    } catch {}
 
     if (cleaned === "THRIFT10") {
       setAppliedPromo({
@@ -193,6 +261,15 @@ export default function CheckoutPage() {
       },
     });
 
+    const placedTotal = finalTotalNumber;
+    const summary = {
+      orderNumber: generatedOrder,
+      shippingMethod: shippingMethod,
+      paymentMethod: paymentMethod,
+      total: placedTotal,
+    };
+
+    setPlacedOrderSummary(summary);
     setOrderNumber(generatedOrder);
     setOrderPlaced(true);
     setIsSubmitting(false);
@@ -201,6 +278,14 @@ export default function CheckoutPage() {
 
   // Order Confirmed Success Screen
   if (orderPlaced) {
+    const isCod =
+      placedOrderSummary?.paymentMethod === "cash" ||
+      placedOrderSummary?.paymentMethod === "cod";
+    const displayTotal =
+      placedOrderSummary?.total !== undefined
+        ? placedOrderSummary.total
+        : finalTotalNumber;
+
     return (
       <div className="min-h-screen pt-28 pb-20 px-6 sm:px-12 max-w-4xl mx-auto flex flex-col items-center justify-center text-center">
         <motion.div
@@ -227,7 +312,7 @@ export default function CheckoutPage() {
             </p>
           </div>
 
-          <div className="w-full p-4 bg-neutral-50 dark:bg-neutral-950 border border-black/10 dark:border-white/10 flex flex-col gap-2 text-left text-xs font-macsans">
+          <div className="w-full p-4 bg-neutral-50 dark:bg-neutral-950 border border-black/10 dark:border-white/10 flex flex-col gap-2.5 text-left text-xs font-macsans">
             <div className="flex justify-between items-center border-b border-black/5 dark:border-white/5 pb-2">
               <span className="text-neutral-500">Order Reference</span>
               <span className="font-mono font-bold text-neutral-900 dark:text-white">
@@ -237,13 +322,27 @@ export default function CheckoutPage() {
             <div className="flex justify-between items-center border-b border-black/5 dark:border-white/5 pb-2">
               <span className="text-neutral-500">Delivery Method</span>
               <span className="text-neutral-900 dark:text-white">
-                {shippingMethod === "express" ? "Express Priority (1–2 Days)" : "Standard Tracked (3–5 Days)"}
+                {placedOrderSummary?.shippingMethod === "express"
+                  ? "Express Priority (1–2 Days)"
+                  : "Standard Tracked (3–5 Days)"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center border-b border-black/5 dark:border-white/5 pb-2">
+              <span className="text-neutral-500">Payment Option</span>
+              <span className="text-neutral-900 dark:text-white font-mono uppercase">
+                {isCod
+                  ? "Cash on Delivery (COD)"
+                  : placedOrderSummary?.paymentMethod === "applepay"
+                  ? "Apple Pay"
+                  : "Credit Card"}
               </span>
             </div>
             <div className="flex justify-between items-center pt-1">
-              <span className="text-neutral-500">Total Paid</span>
-              <span className="font-bold text-[#807248] dark:text-[#d3c59a] text-sm font-mono">
-                ${finalTotalNumber.toFixed(2)}
+              <span className="text-neutral-500 font-semibold">
+                {isCod ? "To Pay (COD)" : "Total Paid"}
+              </span>
+              <span className="font-bold text-[#807248] dark:text-[#d3c59a] text-base font-mono">
+                ${displayTotal.toFixed(2)}
               </span>
             </div>
           </div>

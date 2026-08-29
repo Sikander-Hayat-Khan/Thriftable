@@ -278,13 +278,19 @@ export function ReviewsProvider({ children }) {
     [reviews, persistReviews]
   );
 
-  // Delete / hide review
+  // Delete / hide review from Supabase
   const deleteReview = useCallback(
-    (reviewId) => {
+    async (reviewId) => {
       const updated = reviews.filter((r) => r.id !== reviewId);
       persistReviews(updated);
+
+      try {
+        await supabase.from("reviews").delete().eq("id", reviewId);
+      } catch (err) {
+        console.warn("Failed to delete review from Supabase:", err);
+      }
     },
-    [reviews, persistReviews]
+    [reviews, persistReviews, supabase]
   );
 
   const value = useMemo(

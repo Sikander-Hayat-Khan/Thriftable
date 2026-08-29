@@ -132,8 +132,12 @@ export async function POST(req) {
                           <td style="padding: 6px 0;">Shipping</td>
                           <td align="right" style="padding: 6px 0; color: #ffffff;">${Number(shipping) === 0 ? "FREE" : `$${shipping}`}</td>
                         </tr>
-                        <tr style="border-top: 1px solid #333333; font-size: 16px; font-weight: bold;">
-                          <td style="padding: 14px 0 6px 0; color: #ffffff;">Total Amount</td>
+                        <tr style="border-top: 1px solid #333333; font-size: 15px; font-weight: bold;">
+                          <td style="padding: 14px 0 6px 0; color: #ffffff;">
+                            ${String(order.paymentMethod || "").toLowerCase().includes("cash") || String(order.paymentMethod || "").toLowerCase().includes("cod")
+                              ? "Amount to be Paid (COD)"
+                              : "Amount Paid"}
+                          </td>
                           <td align="right" style="padding: 14px 0 6px 0; color: #B2A376; font-size: 18px;">$${total}</td>
                         </tr>
                       </table>
@@ -295,6 +299,102 @@ Code: THRIFT10 (10% off your first archival acquisition at checkout)
 
 Explore the latest collection drops:
 ${shopUrl}
+
+© ${new Date().getFullYear()} Thriftable. All rights reserved.
+      `.trim();
+    }
+
+    // 3. ORDER SHIPPED / STATUS UPDATE EMAIL
+    else if ((type === "order_shipped" || type === "order_status_update") && order) {
+      const orderId = order.id || order.orderNumber || "TH-RECEIPT";
+      const trackingId = order.supabaseId || order.id || orderId;
+      const statusTitle = order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : "Shipped";
+      const trackingNumber = order.trackingNumber || `TRK-PK-${String(orderId).slice(0, 8).toUpperCase()}`;
+      const carrier = order.carrier || "DHL Express Carbon Neutral";
+      trackingUrl = `${baseUrl}/orders/${encodeURIComponent(trackingId)}`;
+
+      subject = `Your Archive Piece Has ${statusTitle} — #${String(orderId).slice(0, 8).toUpperCase()}`;
+
+      htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${subject}</title>
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #050505; font-family: 'Georgia', serif; color: #ffffff;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #050505; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #0d0d0d; border: 1px solid #262626; border-radius: 2px; overflow: hidden; max-width: 600px; width: 100%;">
+                  <tr>
+                    <td style="background-color: #000000; padding: 36px 30px; text-align: center; border-bottom: 1px solid #262626;">
+                      <div style="font-family: 'Georgia', serif; font-size: 28px; letter-spacing: 0.18em; text-transform: uppercase; color: #B2A376; font-weight: bold;">
+                        THRIFTABLE
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 40px 36px 20px 36px;">
+                      <div style="font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.25em; color: #B2A376; margin-bottom: 8px;">
+                        Fulfillment Update
+                      </div>
+                      <h1 style="font-size: 26px; font-weight: normal; margin: 0 0 16px 0; color: #ffffff;">
+                        Your Archive Order is ${statusTitle}
+                      </h1>
+                      <p style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.7; color: #d4d4d4; margin: 0 0 24px 0;">
+                        Your curated vintage garments have been authenticated, packaged with compostable materials, and handed over to <strong>${carrier}</strong>.
+                      </p>
+
+                      <!-- Tracking Details Box -->
+                      <div style="background-color: #141414; border: 1px solid #262626; padding: 20px; margin: 24px 0;">
+                        <table width="100%" style="font-family: monospace; font-size: 13px;">
+                          <tr>
+                            <td style="color: #737373; padding: 4px 0;">Order Reference:</td>
+                            <td align="right" style="color: #ffffff; font-weight: bold;">#${String(orderId).slice(0, 8).toUpperCase()}</td>
+                          </tr>
+                          <tr>
+                            <td style="color: #737373; padding: 4px 0;">Carrier:</td>
+                            <td align="right" style="color: #B2A376;">${carrier}</td>
+                          </tr>
+                          <tr>
+                            <td style="color: #737373; padding: 4px 0;">Tracking Number:</td>
+                            <td align="right" style="color: #ffffff; font-weight: bold;">${trackingNumber}</td>
+                          </tr>
+                        </table>
+                      </div>
+
+                      <!-- CTA Button -->
+                      <div style="text-align: center; margin: 32px 0 16px 0;">
+                        <a href="${trackingUrl}" target="_blank" style="display: inline-block; padding: 16px 36px; background-color: #B2A376; color: #000000; font-family: monospace; font-size: 13px; font-weight: bold; text-decoration: none; text-transform: uppercase; letter-spacing: 0.15em;">
+                          Track Delivery Status →
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #000000; padding: 24px 30px; text-align: center; border-top: 1px solid #262626; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; color: #525252;">
+                      Questions? Contact us at <strong style="color: #737373;">concierge@thriftable.archive</strong>.<br/>
+                      © ${new Date().getFullYear()} Thriftable. All rights reserved.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+
+      textContent = `
+THRIFTABLE — Order ${statusTitle}
+
+Your order #${String(orderId).slice(0, 8).toUpperCase()} is now ${statusTitle.toLowerCase()}.
+Carrier: ${carrier}
+Tracking Number: ${trackingNumber}
+
+Track live at:
+${trackingUrl}
 
 © ${new Date().getFullYear()} Thriftable. All rights reserved.
       `.trim();

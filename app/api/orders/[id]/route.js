@@ -144,3 +144,62 @@ export async function GET(req, { params }) {
     return NextResponse.json({ error: "Failed to fetch order" }, { status: 500 });
   }
 }
+
+export async function PATCH(req, { params }) {
+  try {
+    const resolvedParams = typeof params?.then === "function" ? await params : params;
+    const orderId = resolvedParams?.id;
+
+    if (!orderId) {
+      return NextResponse.json({ error: "Missing order ID" }, { status: 400 });
+    }
+
+    const body = await req.json();
+    const newStatus = (body.status || "").toLowerCase().trim();
+
+    const updatePayload = {};
+    if (newStatus) updatePayload.status = newStatus;
+    if (body.returnDetails) {
+      updatePayload.return_details =
+        typeof body.returnDetails === "string"
+          ? body.returnDetails
+          : JSON.stringify(body.returnDetails);
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: "Missing Supabase configuration" }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data, error } = await supabase
+      .from("orders")
+      .update(updatePayload)
+      .eq("id", orderId)
+      .select();
+
+    if (error) {
+      // Fallback: If return_details column does not exist, update status only
+      const { data: retryData, error: retryError } = await supabase
+        .from("orders")
+        .update({ status: newStatus })
+        .eq("id", orderId)
+        .select();
+
+      if (retryError) {
+        console.error("Supabase order update error:", retryError);
+        return NextResponse.json({ error: retryError.message }, { status: 500 });
+      }
+      return NextResponse.json({ success: true, orderId, status: newStatus, data: retryData });
+    }
+
+    return NextResponse.json({ success: true, orderId, status: newStatus, data });
+  } catch (err) {
+    console.error("Order status update API exception:", err);
+    return NextResponse.json({ error: err.message || "Failed to update order" }, { status: 500 });
+  }
+}
+
