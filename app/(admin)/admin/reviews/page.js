@@ -72,7 +72,7 @@ export default function AdminReviewsPage() {
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-black/10 dark:border-white/10 mb-8">
           <div>
-            <span className="text-xs uppercase tracking-[0.25em] text-[#B2A376] font-mono font-semibold">
+            <span className="text-xs uppercase tracking-[0.25em] text-[#B2A376] font-calluna font-semibold">
               Admin Portal
             </span>
             <h1 className="text-2xl sm:text-3xl font-macsans font-bold text-neutral-900 dark:text-white mt-1">
@@ -82,7 +82,7 @@ export default function AdminReviewsPage() {
 
           <Link
             href="/reviews/new"
-            className="px-5 py-2.5 bg-[#B2A376] text-black text-xs font-mono uppercase tracking-wider font-semibold hover:opacity-90 transition-opacity shrink-0 text-center"
+            className="px-5 py-2.5 bg-[#B2A376] text-black text-xs font-calluna uppercase tracking-wider font-semibold hover:opacity-90 transition-opacity shrink-0 text-center"
           >
             + Test Review Form
           </Link>
@@ -98,32 +98,32 @@ export default function AdminReviewsPage() {
         {/* Top KPI Metrics Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           <div className="p-5 border border-black/10 dark:border-white/10 bg-neutral-50/50 dark:bg-neutral-900/40">
-            <span className="text-xs font-mono uppercase text-neutral-400">Total Reviews</span>
-            <div className="text-3xl font-macsans font-bold text-neutral-900 dark:text-white mt-1">
+            <span className="text-xs font-calluna uppercase text-neutral-400">Total Reviews</span>
+            <div className="text-3xl font-logo font-bold text-neutral-900 dark:text-white mt-1">
               {totalCount}
             </div>
             <span className="text-[11px] font-proda text-neutral-500">Published storewide</span>
           </div>
 
           <div className="p-5 border border-black/10 dark:border-white/10 bg-neutral-50/50 dark:bg-neutral-900/40">
-            <span className="text-xs font-mono uppercase text-neutral-400">Average Score</span>
-            <div className="text-3xl font-macsans font-bold text-[#B2A376] mt-1">
+            <span className="text-xs font-calluna uppercase text-neutral-400">Average Score</span>
+            <div className="text-3xl font-logo font-bold text-[#B2A376] mt-1">
               {avgRating} <span className="text-xs text-neutral-400 font-mono">/ 5.0</span>
             </div>
             <span className="text-[11px] font-proda text-neutral-500">Overall customer sentiment</span>
           </div>
 
           <div className="p-5 border border-black/10 dark:border-white/10 bg-neutral-50/50 dark:bg-neutral-900/40">
-            <span className="text-xs font-mono uppercase text-neutral-400">Verified Buyer Rate</span>
-            <div className="text-3xl font-macsans font-bold text-neutral-900 dark:text-white mt-1">
+            <span className="text-xs font-calluna uppercase text-neutral-400">Verified Buyer Rate</span>
+            <div className="text-3xl font-logo font-bold text-neutral-900 dark:text-white mt-1">
               {verifiedRate}%
             </div>
             <span className="text-[11px] font-proda text-neutral-500">{verifiedCount} order-verified reviews</span>
           </div>
 
           <div className="p-5 border border-black/10 dark:border-white/10 bg-neutral-50/50 dark:bg-neutral-900/40">
-            <span className="text-xs font-mono uppercase text-neutral-400">Needs Concierge Reply</span>
-            <div className="text-3xl font-macsans font-bold text-amber-600 dark:text-amber-400 mt-1">
+            <span className="text-xs font-calluna uppercase text-neutral-400">Needs Concierge Reply</span>
+            <div className="text-3xl font-logo font-bold text-amber-600 dark:text-amber-400 mt-1">
               {pendingRepliesCount}
             </div>
             <span className="text-[11px] font-proda text-neutral-500">Critical or unreplied feedback</span>
@@ -147,7 +147,7 @@ export default function AdminReviewsPage() {
             <select
               value={ratingFilter}
               onChange={(e) => setRatingFilter(e.target.value)}
-              className="px-3 py-2.5 bg-white dark:bg-neutral-800 border border-black/15 dark:border-white/15 text-xs font-mono text-neutral-800 dark:text-neutral-200 cursor-pointer"
+              className="px-3 py-2.5 bg-white dark:bg-neutral-800 border border-black/15 dark:border-white/15 text-xs font-calluna tracking-wider text-neutral-800 dark:text-neutral-200 cursor-pointer"
             >
               <option value="all">All Star Ratings</option>
               <option value="5">5 Stars Only</option>
