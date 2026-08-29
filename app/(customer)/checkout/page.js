@@ -5,11 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/components/cart-provider";
+import { useOrders } from "@/components/orders-provider";
 
 const FREE_SHIPPING_THRESHOLD = 150;
 
 export default function CheckoutPage() {
   const { cartItems, cartCount, clearCart } = useCart();
+  const { createOrder } = useOrders();
 
   // Step / Form State
   const [formData, setFormData] = useState({
@@ -140,18 +142,61 @@ export default function CheckoutPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmitOrder = (e) => {
+  const handleSubmitOrder = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate order placement
-    setTimeout(() => {
-      const generatedOrder = `TH-${Math.floor(100000 + Math.random() * 900000)}`;
-      setOrderNumber(generatedOrder);
-      setOrderPlaced(true);
-      setIsSubmitting(false);
-      clearCart();
-    }, 1200);
+    const generatedOrder = `TH-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    // Prepare items snapshot
+    const itemsSnapshot = cartItems.map((item) => ({
+      id: item.id,
+      name: item.name,
+      category: item.category || "Vintage",
+      price: item.price,
+      quantity: item.quantity,
+      image: item.image,
+      size: item.size || "M",
+      gender: item.gender || "Unisex",
+      selectedColor: item.selectedColor || null,
+    }));
+
+    // Record order in Orders state / storage / database
+    await createOrder({
+      id: generatedOrder,
+      items: itemsSnapshot,
+      shippingMethod: shippingMethod,
+      paymentMethod: paymentMethod,
+      shippingAddress: {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        country: formData.country,
+        postalCode: formData.postalCode,
+      },
+      paymentDetails: {
+        brand: paymentMethod === "card" ? "Credit Card" : paymentMethod === "applepay" ? "Apple Pay" : "Cash on Delivery",
+        last4: paymentMethod === "card" && formData.cardNumber ? formData.cardNumber.replace(/\s/g, "").slice(-4) : "4242",
+        paid: paymentMethod !== "cod",
+      },
+      pricing: {
+        subtotal: subtotalNumber,
+        promoDiscount: promoDiscountNumber,
+        promoCode: appliedPromo?.code || null,
+        loyaltyDiscount: loyaltyDiscountNumber,
+        shipping: shippingCostNumber,
+        tax: estimatedTaxNumber,
+        total: finalTotalNumber,
+      },
+    });
+
+    setOrderNumber(generatedOrder);
+    setOrderPlaced(true);
+    setIsSubmitting(false);
+    clearCart();
   };
 
   // Order Confirmed Success Screen
@@ -203,15 +248,32 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <Link
-            href="/shop"
-            className="group relative w-full py-4 bg-[#B2A376] text-black font-semibold text-xs uppercase tracking-widest text-center overflow-hidden transition-all duration-300 shadow-md hover:shadow-xl cursor-pointer block"
-          >
-            <span className="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
-            <span className="relative z-10 text-black group-hover:text-white dark:group-hover:text-black transition-colors duration-300">
-              Continue Shopping →
-            </span>
-          </Link>
+          <div className="w-full flex flex-col gap-3">
+            <Link
+              href={`/orders/${orderNumber}`}
+              className="group relative w-full py-4 bg-[#B2A376] text-black font-semibold text-xs uppercase tracking-widest text-center overflow-hidden transition-all duration-300 shadow-md hover:shadow-xl cursor-pointer block"
+            >
+              <span className="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0" />
+              <span className="relative z-10 text-black group-hover:text-white dark:group-hover:text-black transition-colors duration-300">
+                View Order Details & Tracking →
+              </span>
+            </Link>
+
+            <div className="flex gap-3">
+              <Link
+                href="/orders"
+                className="flex-1 py-3 border border-black/15 dark:border-white/15 text-neutral-800 dark:text-neutral-200 text-xs font-mono uppercase tracking-wider text-center hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              >
+                All Orders
+              </Link>
+              <Link
+                href="/shop"
+                className="flex-1 py-3 border border-black/15 dark:border-white/15 text-neutral-800 dark:text-neutral-200 text-xs font-mono uppercase tracking-wider text-center hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              >
+                Continue Shopping
+              </Link>
+            </div>
+          </div>
         </motion.div>
       </div>
     );

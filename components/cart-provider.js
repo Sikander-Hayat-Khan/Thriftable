@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { catalogueItems } from "@/data/products";
+import { showCartToast } from "./cart-toast";
 
 const CartContext = createContext({
   cartItems: [],
@@ -18,18 +19,7 @@ const CartContext = createContext({
 });
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([
-    {
-      ...catalogueItems[0],
-      quantity: 1,
-      selectedColor: catalogueItems[0].colors?.[0] || { name: "Default", hex: "#DDC55B" },
-    },
-    {
-      ...catalogueItems[1],
-      quantity: 1,
-      selectedColor: catalogueItems[1].colors?.[0] || { name: "Washed Black", hex: "#1f1f1f" },
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Close cart on Escape key
@@ -47,7 +37,7 @@ export function CartProvider({ children }) {
   const closeCart = () => setIsCartOpen(false);
   const toggleCart = () => setIsCartOpen((prev) => !prev);
 
-  const addToCart = (item, color = null) => {
+  const addToCart = (item, color = null, options = { openDrawer: false }) => {
     setCartItems((prev) => {
       const existingIndex = prev.findIndex((i) => i.id === item.id);
       if (existingIndex > -1) {
@@ -67,7 +57,13 @@ export function CartProvider({ children }) {
         },
       ];
     });
-    setIsCartOpen(true);
+
+    // Trigger elegant slide-down toast notification below navbar on left side
+    showCartToast(item, color, openCart);
+
+    if (options.openDrawer) {
+      setIsCartOpen(true);
+    }
   };
 
   const removeFromCart = (id) => {
