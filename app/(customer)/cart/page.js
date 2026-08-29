@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/components/cart-provider";
 import CartQuantityControl from "@/components/cart-quantity-control";
 import { catalogueItems } from "@/data/products";
+import WishlistButton from "@/components/wishlist-button";
 
 const FREE_SHIPPING_THRESHOLD = 150;
 
@@ -538,15 +539,20 @@ export default function CartPage() {
                   key={prod.id}
                   className="group border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 flex flex-col justify-between hover:border-black/40 dark:hover:border-white/40 transition-all duration-300"
                 >
-                  <Link href={`/shop/${prod.id}`} className="relative aspect-3/4 w-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden block">
-                    <Image
-                      src={prod.image}
-                      alt={prod.name}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className={`object-cover ${prod.objectPosition || "object-center"} group-hover:scale-105 transition-transform duration-700`}
-                    />
-                  </Link>
+                  <div className="relative aspect-3/4 w-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden block">
+                    <Link href={`/shop/${prod.id}`} className="absolute inset-0 block">
+                      <Image
+                        src={prod.image}
+                        alt={prod.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        className={`object-cover ${prod.objectPosition || "object-center"} group-hover:scale-105 transition-transform duration-700`}
+                      />
+                    </Link>
+                    <div className="absolute top-2.5 right-2.5 z-10">
+                      <WishlistButton product={prod} size="sm" />
+                    </div>
+                  </div>
 
                   <div className="p-4 flex flex-col justify-between flex-1 gap-3">
                     <div>

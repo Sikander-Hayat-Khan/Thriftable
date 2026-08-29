@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { catalogueItems } from "@/data/products";
 import { useCart } from "@/components/cart-provider";
+import WishlistButton from "@/components/wishlist-button";
 
 const ITEMS_PER_PAGE = 24;
 
@@ -386,6 +387,11 @@ function ShopContent() {
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           className={`object-cover ${item.objectPosition || "object-center"} group-hover:scale-105 transition-transform duration-700 rounded-none`}
                         />
+
+                        {/* Minimalist Wishlist Button (Top Right) */}
+                        <div className="absolute top-3 right-3 z-20">
+                          <WishlistButton product={item} size="sm" />
+                        </div>
 
                         {/* Slide-Up Add To Cart Button on Card Hover */}
                         <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">

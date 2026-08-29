@@ -63,6 +63,7 @@
   --font-nomad: "Nomad", sans-serif;
   --font-macsans: "MacSans", sans-serif;
   --font-proda: "ProdaSans", sans-serif;
+  --font-signature: var(--font-signature), cursive;
 }
 
 .font-logo {
@@ -83,6 +84,10 @@
 
 .font-proda {
   font-family: var(--font-proda), "ProdaSans", sans-serif;
+}
+
+.font-signature {
+  font-family: var(--font-signature), cursive, sans-serif;
 }
 
 html {
@@ -113,4 +118,120 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ==========================================================================
+   React Toastify Custom Theme & Left Slide-Down Position below Navbar
+   ========================================================================== */
+
+@keyframes toastSlideDownLeft {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideUpLeft {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.96);
+  }
+}
+
+.toast-slide-down-left-enter {
+  animation: toastSlideDownLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.toast-slide-down-left-exit {
+  animation: toastSlideUpLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+/* Container placed cleanly below the fixed top navbar on the left side */
+.thriftable-toast-container.Toastify__toast-container--top-left {
+  top: 5rem !important; /* 80px - right underneath the h-16 navbar */
+  left: 1.5rem !important;
+  width: auto !important;
+  max-width: calc(100vw - 3rem) !important;
+  padding: 0 !important;
+  z-index: 9999 !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 640px) {
+  .thriftable-toast-container.Toastify__toast-container--top-left {
+    top: 4.5rem !important;
+    left: 1rem !important;
+    right: 1rem !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+}
+
+.thriftable-toast-item.Toastify__toast {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-bottom: 0.75rem !important;
+  min-height: unset !important;
+  border-radius: 0 !important;
+  pointer-events: auto !important;
+  overflow: visible !important;
+}
+
+.thriftable-toast-item .Toastify__toast-body {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.thriftable-toast-item .Toastify__close-button {
+  display: none !important;
+}
+
+/* Custom Progress Bar in brand Gold */
+.thriftable-toast-item .Toastify__progress-bar {
+  background: #B2A376 !important;
+  height: 2px !important;
+  bottom: 0 !important;
+  border-radius: 0 !important;
+}
+
+.thriftable-toast-item .Toastify__progress-bar--colored {
+  background: #B2A376 !important;
+}
+
 

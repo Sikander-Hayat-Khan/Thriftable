@@ -524,7 +524,7 @@ export const catalogueItems = [
   {
     id: "eye-6",
     name: "Vintage Cat-Eye Horn-Rim Frames",
-    category: "Men",
+    category: "eyewear",
     price: "$82.00",
     size: "One Size",
     gender: "Women",
@@ -539,10 +539,10 @@ export const catalogueItems = [
   {
     id: "eye-7",
     name: "Square Matte Steel Polarized Frames",
-    category: "Unisex",
+    category: "eyewear",
     price: "$95.00",
     size: "One Size",
-    gender: "Men",
+    gender: "Unisex",
     condition: "Flawless",
     description: "Surgical grade stainless steel frame fitted with polarized glare-blocking lenses.",
     colors: [

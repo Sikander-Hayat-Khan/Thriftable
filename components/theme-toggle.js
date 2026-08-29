@@ -25,7 +25,7 @@ export default function ThemeToggle({ className = "", isDrawer = false }) {
       type="button"
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className={`relative inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 focus:outline-none cursor-pointer disabled:opacity-75 group ${
+      className={`relative inline-flex items-center justify-center md:w-10 md:h-10 w-7 h-7 rounded-full transition-all duration-300 focus:outline-none cursor-pointer disabled:opacity-75 group ${
         isDrawer
           ? "bg-black/10 hover:bg-black/20 text-black border border-black/15 active:scale-95"
           : "bg-white/10 hover:bg-white/20 text-white border border-white/15 backdrop-blur-md active:scale-95 shadow-sm"

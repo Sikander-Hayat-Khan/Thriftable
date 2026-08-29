@@ -1,10 +1,23 @@
 import localFont from "next/font/local";
+import { Caveat } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/nav";
 import ScrollToTop from "@/components/scroll-to-top";
 import Preloader from "@/components/loader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CartProvider } from "@/components/cart-provider";
+import { AuthProvider } from "@/components/auth-provider";
+import { WishlistProvider } from "@/components/wishlist-provider";
+import { OrdersProvider } from "@/components/orders-provider";
+import { ReviewsProvider } from "@/components/reviews-provider";
+import AppToastContainer from "@/components/toast-container";
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-signature",
+  weight: ["400", "700"],
+  display: "swap",
+});
 
 const broela = localFont({
   src: "../public/fonts/broela/Broela.otf",
@@ -45,8 +58,9 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={`${broela.variable} ${calluna.variable} ${nomad.variable} ${macSans.variable} ${prodaSans.variable} h-full antialiased`}
+      className={`${broela.variable} ${calluna.variable} ${nomad.variable} ${macSans.variable} ${prodaSans.variable} ${caveat.variable} h-full antialiased`}
     >
       <head>
         <script
@@ -77,12 +91,21 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-full flex flex-col bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-500">
         <ThemeProvider>
-          <CartProvider>
-            {/* <Preloader /> */}
-            <Nav />
-            <main className="flex-1">{children}</main>
-            <ScrollToTop />
-          </CartProvider>
+          <AuthProvider>
+            <WishlistProvider>
+              <OrdersProvider>
+                <ReviewsProvider>
+                  <CartProvider>
+                    <Preloader />
+                    <Nav />
+                    <main className="flex-1">{children}</main>
+                    <AppToastContainer />
+                    <ScrollToTop />
+                  </CartProvider>
+                </ReviewsProvider>
+              </OrdersProvider>
+            </WishlistProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

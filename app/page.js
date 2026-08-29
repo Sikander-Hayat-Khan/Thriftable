@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/footer";
 import FluidBackgroundFill from "@/components/fluid-background-fill";
+import TestimonialsCarousel from "@/components/testimonials-carousel";
 import { useTheme } from "@/components/theme-provider";
 
 const categories = [
@@ -312,7 +313,10 @@ export default function Home() {
         );
       })}
 
-      {/* 08: Footer Section */}
+      {/* 08: Community Testimonials & Top Reviews */}
+      <TestimonialsCarousel />
+
+      {/* 09: Footer Section */}
       <section id="footer" className="relative z-10 w-full shrink-0 min-h-[30vh] bg-black">
         <Footer />
       </section>
