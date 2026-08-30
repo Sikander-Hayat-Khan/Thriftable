@@ -2,47 +2,8 @@
 
 @variant dark (&:where(.dark, .dark *));
 
-@font-face {
-  font-family: "Broela";
-  src: url("/fonts/broela/Broela.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+/* Thriftable base design tokens. */
 
-@font-face {
-  font-family: "Calluna";
-  src: url("/fonts/calluna/Calluna-Regular.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Nomad";
-  src: url("/fonts/nomad/Nomad.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "MacSans";
-  src: url("/fonts/mac_sans/MacSans-Regular.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "ProdaSans";
-  src: url("/fonts/proda_sans/ProdaSans-Regular.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Thriftable base design tokens. Phase 1: minimal, expand as screens get built. */
 :root {
   --color-ink: #171717;
   --color-paper: #ffffff;

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,7 +10,10 @@ import { useTheme } from "./theme-provider";
 import { useCart } from "./cart-provider";
 import { useAuth } from "./auth-provider";
 import { useWishlist } from "./wishlist-provider";
-import CartDrawer from "./cart-drawer";
+
+const CartDrawer = dynamic(() => import("./cart-drawer"), { ssr: false });
+
+
 
 const navLinks = [
   { href: "/shop", label: "Shop", num: "01" },

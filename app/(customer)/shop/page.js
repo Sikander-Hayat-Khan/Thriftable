@@ -9,6 +9,7 @@ import { catalogueItems } from "@/data/products";
 import { useCart } from "@/components/cart-provider";
 import WishlistButton from "@/components/wishlist-button";
 import { createClient } from "@/utils/supabase/client";
+import AiSearchBar from "@/components/search/ai-search-bar";
 
 const ITEMS_PER_PAGE = 24;
 
@@ -117,6 +118,9 @@ function ShopContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
+  const [aiSearchResults, setAiSearchResults] = useState(null);
+  const [aiExtracted, setAiExtracted] = useState(null);
+  const [aiQuery, setAiQuery] = useState("");
 
   // Fetch live products from Supabase
   useEffect(() => {
@@ -170,6 +174,9 @@ function ShopContent() {
   useEffect(() => {
     const catFromUrl = searchParams.get("category");
     if (catFromUrl) {
+      setAiSearchResults(null);
+      setAiExtracted(null);
+      setAiQuery("");
       setSelectedCategory(catFromUrl);
       setCurrentPage(1);
       scrollToCatalogue();
@@ -177,6 +184,9 @@ function ShopContent() {
   }, [searchParams]);
 
   const handleCategorySelect = (categoryId) => {
+    setAiSearchResults(null);
+    setAiExtracted(null);
+    setAiQuery("");
     setSelectedCategory(categoryId);
     setCurrentPage(1);
     scrollToCatalogue();
@@ -187,33 +197,48 @@ function ShopContent() {
     setCurrentPage(1);
   };
 
+  const handleAiSearchResults = ({ items, extracted, usedFallback, query }) => {
+    setAiSearchResults(items);
+    setAiExtracted(extracted);
+    setAiQuery(query);
+    setSelectedCategory("all");
+    setCurrentPage(1);
+    scrollToCatalogue();
+  };
+
+  const handleAiResetSearch = () => {
+    setAiSearchResults(null);
+    setAiExtracted(null);
+    setAiQuery("");
+    setCurrentPage(1);
+  };
+
+  const baseItems = aiSearchResults !== null ? aiSearchResults : productsList;
+
   const filteredItems = useMemo(() => {
-    return productsList
+    return baseItems
       .filter((item) => {
         const matchesCategory =
           selectedCategory === "all" || item.category === selectedCategory;
         const matchesSearch =
+          !searchQuery ||
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.gender.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
       })
       .sort((a, b) => {
+        const priceA = parseFloat(String(a.price).replace(/[^0-9.]/g, "")) || 0;
+        const priceB = parseFloat(String(b.price).replace(/[^0-9.]/g, "")) || 0;
         if (sortBy === "price-low") {
-          return (
-            parseFloat(a.price.replace("$", "")) -
-            parseFloat(b.price.replace("$", ""))
-          );
+          return priceA - priceB;
         }
         if (sortBy === "price-high") {
-          return (
-            parseFloat(b.price.replace("$", "")) -
-            parseFloat(a.price.replace("$", ""))
-          );
+          return priceB - priceA;
         }
         return 0;
       });
-  }, [selectedCategory, searchQuery, sortBy]);
+  }, [baseItems, selectedCategory, searchQuery, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
 
@@ -320,7 +345,7 @@ function ShopContent() {
         className="relative z-10 w-full px-6 sm:px-12 lg:px-16 py-16 scroll-mt-16 bg-white dark:bg-neutral-950 transition-colors duration-500 shadow-[0_-25px_50px_rgba(0,0,0,0.45)]"
       >
         {/* Header & Filter Controls Bar */}
-        <div className="flex flex-col gap-8 pb-10 border-b border-black/10 dark:border-white/10">
+        <div className="flex flex-col gap-6 pb-8 border-b border-black/10 dark:border-white/10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <span className="text-xs uppercase font-mono tracking-[0.25em] text-[#B2A376] font-medium">
@@ -354,6 +379,17 @@ function ShopContent() {
             </div>
           </div>
 
+          {/* AI Natural Language Search Bar */}
+          <div className="w-full pt-1 relative z-30">
+            <AiSearchBar
+              onSearchResults={handleAiSearchResults}
+              onResetSearch={handleAiResetSearch}
+              activeExtracted={aiExtracted}
+              resultsCount={filteredItems.length}
+              hasActiveSearch={aiSearchResults !== null}
+            />
+          </div>
+
           {/* Minimalist Category Tabs */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
             {filterTabs.map((tab) => {
@@ -385,6 +421,7 @@ function ShopContent() {
               onClick={() => {
                 setSelectedCategory("all");
                 setSearchQuery("");
+                handleAiResetSearch();
                 setCurrentPage(1);
               }}
               className="mt-4 text-xs font-mono uppercase tracking-widest underline cursor-pointer text-[#B2A376]"
