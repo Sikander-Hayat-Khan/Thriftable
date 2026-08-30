@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import AdminSidebar from "@/components/admin-sidebar";
 import AdminTopbar from "@/components/admin-topbar";
+import AdminMobileNav from "@/components/admin-mobile-nav";
 import { createClient } from "@/utils/supabase/client";
 
 export default function AdminLayout({ children }) {
@@ -161,7 +162,7 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col">
-      {/* Sidebar */}
+      {/* Sidebar Drawer */}
       <AdminSidebar
         isMobileOpen={isMobileOpen}
         setIsMobileOpen={setIsMobileOpen}
@@ -170,10 +171,16 @@ export default function AdminLayout({ children }) {
       {/* Main Content Area */}
       <div className="lg:pl-64 flex flex-col flex-1 min-h-screen">
         <AdminTopbar setIsMobileOpen={setIsMobileOpen} />
-        <main className="flex-1 p-6 sm:p-8 lg:p-10 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-8 lg:p-10 pb-28 lg:pb-10 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <AdminMobileNav
+        isMobileOpen={isMobileOpen}
+        setIsMobileOpen={setIsMobileOpen}
+      />
     </div>
   );
 }
